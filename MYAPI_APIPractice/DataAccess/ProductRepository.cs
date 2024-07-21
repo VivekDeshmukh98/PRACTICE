@@ -18,13 +18,31 @@ namespace MYAPI_APIPractice.Repository
             _context = context;
         }
 
-        public async Task<Product> AddProductAsync(Product product)
+        public async Task<Product> GetProductByIdAsync(int id)
+        {
+            return await _context.Products
+                .Include(p => p.Category)
+                .FirstOrDefaultAsync(p => p.Id == id);
+        }
+
+        public async Task<IEnumerable<Product>> GetAllProductsAsync()
+        {
+            return await _context.Products
+                .Include(p => p.Category)
+                .ToListAsync();
+        }
+
+        public async Task AddProductAsync(Product product)
         {
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
-            return product;
         }
 
+        public async Task UpdateProductAsync(Product product)
+        {
+            _context.Products.Update(product);
+            await _context.SaveChangesAsync();
+        }
 
         public async Task DeleteProductAsync(int id)
         {
@@ -36,21 +54,9 @@ namespace MYAPI_APIPractice.Repository
             }
         }
 
-        public async Task<IEnumerable<Product>> GetAllProductsAsync()
-        {
-            return await _context.Products.ToListAsync();
-        }
+       
 
-        public async Task<Product> GetProductByIdAsync(int id)
-        {
-            return await _context.Products.FindAsync(id);
-        }
-
-        public  async Task<Product> UpdateProductAsync(Product product)
-        {
-            _context.Entry(product).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return product;
-        }
+       
+        
     }
 }

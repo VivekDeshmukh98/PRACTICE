@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using MYAPI_APIPractice.BuisnessLogic;
 using MYAPI_APIPractice.Data;
+using MYAPI_APIPractice.DataAccess;
 using MYAPI_APIPractice.IRepository;
 using MYAPI_APIPractice.Repository;
 using System;
@@ -33,8 +34,22 @@ namespace MYAPI_APIPractice
         {
             services.AddDbContext<ApplicationDbContext>(options =>
       options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddControllers()
+        .AddNewtonsoftJson(options =>
+        {
+            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+        });
+
+
+
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IProductService, ProductService>();
+
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<ICategoryService, CategoryService>();
+
+
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

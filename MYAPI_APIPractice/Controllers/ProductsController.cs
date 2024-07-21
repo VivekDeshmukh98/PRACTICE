@@ -21,12 +21,6 @@ namespace MYAPI_APIPractice.Controllers
             _productService = productService;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
-        {
-            return Ok(await _productService.GetAllProductsAsync());
-        }
-
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
@@ -38,14 +32,20 @@ namespace MYAPI_APIPractice.Controllers
             return Ok(product);
         }
 
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        {
+            var products = await _productService.GetAllProductsAsync();
+            return Ok(products);
+        }
+
+       
+
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(Product product)
         {
-            // Ensure Id is not set
-            product.Id = 0;
-
-            var createdProduct = await _productService.AddProductAsync(product);
-            return CreatedAtAction(nameof(GetProduct), new { id = createdProduct.Id }, createdProduct);
+            await _productService.AddProductAsync(product);
+            return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
         }
 
 
